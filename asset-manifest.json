@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/school-finder/static/css/main.c61c82f4.css",
+    "main.js": "/school-finder/static/js/main.d0fc7da8.js",
+    "static/js/453.bad31942.chunk.js": "/school-finder/static/js/453.bad31942.chunk.js",
+    "index.html": "/school-finder/index.html",
+    "main.c61c82f4.css.map": "/school-finder/static/css/main.c61c82f4.css.map",
+    "main.d0fc7da8.js.map": "/school-finder/static/js/main.d0fc7da8.js.map",
+    "453.bad31942.chunk.js.map": "/school-finder/static/js/453.bad31942.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.c61c82f4.css",
+    "static/js/main.d0fc7da8.js"
+  ]
+}
