@@ -36,3 +36,10 @@
     transform: rotate(360deg);
   }
 }
+.app-header {
+  text-align: center;
+  padding: 1rem;
+  background-color: #0077b5;
+  color: white;
+}
+
