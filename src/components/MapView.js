@@ -1,56 +1,80 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { fetchNearbySchools } from '../services/schoolService';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import SearchBar from './SearchBar';
 
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
+
 const MapView = () => {
-  const [userPosition, setUserPosition] = useState([0, 0]);
+  const [position, setPosition] = useState([-1.2921, 36.8219]);
   const [schools, setSchools] = useState([]);
 
-  // Get current location when the map first loads
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
-      async (pos) => {
+      (pos) => {
         const { latitude, longitude } = pos.coords;
-        const coords = [latitude, longitude];
-        setUserPosition(coords);
-
-        const schoolResults = await fetchNearbySchools(latitude, longitude);
-        setSchools(schoolResults);
+        setPosition([latitude, longitude]);
       },
-      (err) => console.error("Geolocation error:", err)
+      () => {
+        console.warn('Geolocation failed, using default.');
+      }
     );
+
+    setSchools([
+      {
+        name: 'Nairobi School',
+        lat: -1.2884,
+        lon: 36.8219,
+      },
+      {
+        name: 'Starehe Boys',
+        lat: -1.2864,
+        lon: 36.8172,
+      },
+    ]);
   }, []);
 
-  // Called when user searches a place
-  const handleSearchLocation = async (newCoords) => {
-    setUserPosition(newCoords);
-
-    const [latitude, longitude] = newCoords;
-    const schoolResults = await fetchNearbySchools(latitude, longitude);
-    setSchools(schoolResults);
+  const handleSearch = (coords) => {
+    setPosition(coords);
+    setSchools([
+      {
+        name: 'Example School A',
+        lat: coords[0] + 0.005,
+        lon: coords[1] + 0.003,
+      },
+      {
+        name: 'Example School B',
+        lat: coords[0] - 0.004,
+        lon: coords[1] - 0.006,
+      },
+    ]);
   };
 
   return (
-    <>
-      <SearchBar onSearch={handleSearchLocation} />
-
-      <MapContainer center={userPosition} zoom={15} style={{ height: '90vh', width: '100%' }}>
+    <div>
+      <SearchBar onSearch={handleSearch} />
+      <MapContainer center={position} zoom={14} style={{ height: '90vh', width: '100%' }}>
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
-        {/* Your Location Marker */}
-        <Marker position={userPosition}>
+        <Marker position={position}>
           <Popup>You are here</Popup>
         </Marker>
-
-        {/* School Markers */}
         {schools.map((school, index) => (
           <Marker key={index} position={[school.lat, school.lon]}>
-            <Popup>{school.display_name}</Popup>
+            <Popup>{school.name}</Popup>
           </Marker>
         ))}
       </MapContainer>
-    </>
+    </div>
   );
 };
 

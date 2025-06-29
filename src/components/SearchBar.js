@@ -7,15 +7,13 @@ const SearchBar = ({ onSearch }) => {
     e.preventDefault();
     if (!query) return;
 
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
-    const res = await fetch(url);
+    // Use Nominatim API to geocode the place
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`);
     const data = await res.json();
 
-    if (data && data[0]) {
-      const { lat, lon } = data[0];
-      onSearch([parseFloat(lat), parseFloat(lon)]);
-    } else {
-      alert('Location not found');
+    if (data.length > 0) {
+      const location = data[0];
+      onSearch([parseFloat(location.lat), parseFloat(location.lon)]);
     }
 
     setQuery('');
@@ -25,14 +23,12 @@ const SearchBar = ({ onSearch }) => {
     <form onSubmit={handleSearch} style={{ textAlign: 'center', margin: '1rem' }}>
       <input
         type="text"
-        placeholder="Search a town or location..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        style={{ padding: '0.5rem', width: '250px' }}
+        placeholder="Search for a town or place..."
+        style={{ padding: '0.5rem', width: '250px', marginRight: '10px' }}
       />
-      <button type="submit" style={{ padding: '0.5rem 1rem', marginLeft: '0.5rem' }}>
-        Search
-      </button>
+      <button type="submit" style={{ padding: '0.5rem 1rem' }}>Search</button>
     </form>
   );
 };
